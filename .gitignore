@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.py[cod]
+*.db
+*.log
+logs/
+tts_cache/
+vf_memory/
+vocal_cache/
+sing_output/
+songs/
+models/*.pth
+models/*.index
+Retrieval-based-Voice-Conversion-WebUI/

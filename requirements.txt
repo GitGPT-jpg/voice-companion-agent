@@ -1,0 +1,17 @@
+anthropic>=0.30.0
+edge-tts>=6.1.0
+pygame>=2.5.0
+python-dotenv>=1.0.0
+
+# RVC 唱歌模块依赖
+demucs>=4.0.0
+soundfile>=0.12.0
+numpy>=1.24.0
+librosa>=0.10.0
+ffmpeg-python>=0.2.0
+imageio-ffmpeg>=0.5.0
+
+# Web 版
+flask>=3.0.0
+flask-socketio>=5.3.0
+flask-login>=0.6.3

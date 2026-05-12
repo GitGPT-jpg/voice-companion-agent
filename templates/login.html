@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>💕 灵魂伴侣</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0F0A1E;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #F0E6FF;
+    }
+    .card {
+      background: #18102E;
+      border: 1px solid #3D2B5A;
+      border-radius: 24px;
+      padding: 52px 44px 44px;
+      width: 360px;
+      text-align: center;
+      box-shadow: 0 20px 60px #00000066;
+    }
+    .avatar-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF6B9D, #B57BEE);
+      margin: 0 auto 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 38px;
+      box-shadow: 0 0 30px #FF6B9D44;
+    }
+    h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .sub { color: #8B7AA0; font-size: 13px; margin-bottom: 36px; }
+    input {
+      width: 100%;
+      padding: 13px 18px;
+      background: #140D28;
+      border: 1px solid #3D2B5A;
+      border-radius: 14px;
+      color: #F0E6FF;
+      font-size: 14px;
+      margin-bottom: 12px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .2s;
+    }
+    input:focus { border-color: #FF6B9D; }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #FF6B9D, #B57BEE);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity .2s, transform .1s;
+      font-weight: 600;
+    }
+    button:hover { opacity: .9; }
+    button:active { transform: scale(.97); }
+    .error {
+      background: #3D1A2E;
+      border: 1px solid #FF6B9D55;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #FF8FB8;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="avatar-icon">💕</div>
+    <h2>灵魂伴侣</h2>
+    <p class="sub">只为你一人 · 独家专属</p>
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+    <form method="POST">
+      <input type="text" name="username" placeholder="用户名" autocomplete="username" required>
+      <input type="password" name="password" placeholder="密码" autocomplete="current-password" required>
+      <button type="submit">进入 ❤</button>
+    </form>
+  </div>
+</body>
+</html>
