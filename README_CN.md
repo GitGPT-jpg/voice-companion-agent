@@ -257,16 +257,6 @@ docker compose up -d
 
 ---
 
-## 面试重点展开
-
-- 人设、记忆和 Prompt 是如何组织和分离的
-- 为什么选择"摘要压缩"而不是简单截断历史
-- 多模态输出如何由同一个对话状态机统一编排
-- 哪些能力放本地，哪些能力交给云端 API
-- 产品体验设计如何反向影响技术架构决策
-
----
-
 ## License
 
 MIT © [GitGPT-jpg](https://github.com/GitGPT-jpg)
