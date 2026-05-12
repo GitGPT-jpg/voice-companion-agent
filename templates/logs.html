@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>管理后台 / Admin Panel · 灵魂伴侣 / Soulmate</title>
+  <title>管理后台 · 灵魂伴侣</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -19,8 +19,17 @@
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
     }
+    .topbar-actions {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
     .logo { font-size: 20px; font-weight: 700; }
     .logo span { color: #FF6B9D; }
+    .lang-toggle {
+      padding: 7px 14px;
+      background: #18102E; border: 1px solid #3D2B5A; border-radius: 20px;
+      color: #B57BEE; font-size: 13px; cursor: pointer; font-family: inherit;
+    }
+    .lang-toggle:hover { border-color: #B57BEE; }
     .back-btn {
       padding: 7px 16px;
       background: #18102E; border: 1px solid #3D2B5A; border-radius: 20px;
@@ -102,38 +111,41 @@
 <body>
 
 <div class="topbar">
-  <div class="logo">💕 <span>灵魂伴侣 / Soulmate</span> · 管理后台 / Admin Panel</div>
-  <a class="back-btn" href="/">← 返回聊天 / Back to Chat</a>
+  <div class="logo">💕 <span data-i18n="app_name">灵魂伴侣</span> · <span data-i18n="admin_panel">管理后台</span></div>
+  <div class="topbar-actions">
+    <button type="button" class="lang-toggle" data-lang-toggle>English</button>
+    <a class="back-btn" href="/" data-i18n="back_to_chat">← 返回聊天</a>
+  </div>
 </div>
 
 <!-- 统计卡片（数据来自 Python，不依赖 Jinja2 filters） -->
 <div class="stats">
   <div class="stat-card">
     <div class="stat-num">{{ total }}</div>
-    <div class="stat-label">📋 总消息数 / Messages</div>
+    <div class="stat-label" data-i18n="messages_count">📋 总消息数</div>
   </div>
   <div class="stat-card">
     <div class="stat-num">{{ users | length }}</div>
-    <div class="stat-label">👤 用户数 / Users</div>
+    <div class="stat-label" data-i18n="users_count">👤 用户数</div>
   </div>
   <div class="stat-card">
     <div class="stat-num">{{ sing_count }}</div>
-    <div class="stat-label">🎵 唱歌次数 / Singing</div>
+    <div class="stat-label" data-i18n="singing_count">🎵 唱歌次数</div>
   </div>
 </div>
 
 <!-- 过滤栏 -->
 <div class="filter-bar">
-  <label>用户 / User:</label>
+  <label data-i18n="user_label">用户：</label>
   <select id="filterUser" onchange="applyFilter()">
-    <option value="">全部 / All</option>
+    <option value="" data-i18n="all_option">全部</option>
     {% for u in users %}
       <option value="{{ u }}">{{ u }}</option>
     {% endfor %}
   </select>
-  <label>搜索 / Search:</label>
-  <input type="text" id="searchBox" placeholder="关键词 / Keyword…" oninput="applyFilter()">
-  <button class="refresh-btn" onclick="location.reload()">🔄 刷新 / Refresh</button>
+  <label data-i18n="search_label">搜索：</label>
+  <input type="text" id="searchBox" data-i18n-placeholder="keyword_placeholder" placeholder="关键词…" oninput="applyFilter()">
+  <button class="refresh-btn" onclick="location.reload()" data-i18n="refresh">🔄 刷新</button>
 </div>
 
 <!-- 数据表格 -->
@@ -142,12 +154,12 @@
   <table id="logTable">
     <thead>
       <tr>
-        <th>时间 / Time</th>
-        <th>用户 / User</th>
-        <th>类型 / Type</th>
-        <th>她说 / User Msg</th>
-        <th>回复 / Reply</th>
-        <th>语音 / Audio</th>
+        <th data-i18n="th_time">时间</th>
+        <th data-i18n="th_user">用户</th>
+        <th data-i18n="th_type">类型</th>
+        <th data-i18n="th_user_msg">她说</th>
+        <th data-i18n="th_reply">回复</th>
+        <th data-i18n="th_audio">语音</th>
       </tr>
     </thead>
     <tbody>
@@ -157,16 +169,16 @@
         <td class="td-user">{{ row.username }}</td>
         <td>
           {% if row.intent == 'sing' %}
-            <span class="badge badge-sing">🎵 唱歌 / Sing</span>
+            <span class="badge badge-sing" data-intent="sing">🎵 唱歌</span>
           {% else %}
-            <span class="badge badge-chat">💬 聊天 / Chat</span>
+            <span class="badge badge-chat" data-intent="chat">💬 聊天</span>
           {% endif %}
         </td>
         <td class="td-msg">{{ row.user_msg }}</td>
         <td class="td-reply">{{ row.bot_reply }}</td>
         <td>
           {% if row.audio_path %}
-          <a class="audio-link" href="/audio/tts/{{ row.audio_path | basename }}" target="_blank">▶ 播放 / Play</a>
+          <a class="audio-link" href="/audio/tts/{{ row.audio_path | basename }}" target="_blank" data-i18n="play_audio">▶ 播放</a>
           {% endif %}
         </td>
       </tr>
@@ -175,10 +187,10 @@
   </table>
 </div>
 {% else %}
-  <div class="empty">暂无对话记录 / No conversation logs yet</div>
+  <div class="empty" data-i18n="no_logs">暂无对话记录</div>
 {% endif %}
 
-<p class="footer-tip">显示最新 500 条 / Latest 500 rows · 每 30 秒自动刷新 / Auto refresh every 30s · <span id="countdown">30</span>s</p>
+<p class="footer-tip"><span data-i18n="footer_prefix">显示最新 500 条 · 每 30 秒自动刷新 ·</span> <span id="countdown">30</span>s</p>
 
 <script>
   function applyFilter() {
@@ -198,6 +210,77 @@
     if (el) el.textContent = sec;
     if (sec <= 0) { clearInterval(tick); location.reload(); }
   }, 1000);
+</script>
+<script src="/static/i18n.js?v=1"></script>
+<script>
+  const LOGS_DICT = {
+    titles: {
+      "zh-CN": "管理后台 · 灵魂伴侣",
+      "en": "Admin Panel · Soulmate"
+    },
+    strings: {
+      "zh-CN": {
+        app_name: "灵魂伴侣",
+        admin_panel: "管理后台",
+        back_to_chat: "← 返回聊天",
+        messages_count: "📋 总消息数",
+        users_count: "👤 用户数",
+        singing_count: "🎵 唱歌次数",
+        user_label: "用户：",
+        all_option: "全部",
+        search_label: "搜索：",
+        keyword_placeholder: "关键词…",
+        refresh: "🔄 刷新",
+        th_time: "时间",
+        th_user: "用户",
+        th_type: "类型",
+        th_user_msg: "她说",
+        th_reply: "回复",
+        th_audio: "语音",
+        play_audio: "▶ 播放",
+        no_logs: "暂无对话记录",
+        footer_prefix: "显示最新 500 条 · 每 30 秒自动刷新 ·"
+      },
+      "en": {
+        app_name: "Soulmate",
+        admin_panel: "Admin Panel",
+        back_to_chat: "← Back to Chat",
+        messages_count: "📋 Messages",
+        users_count: "👤 Users",
+        singing_count: "🎵 Singing",
+        user_label: "User:",
+        all_option: "All",
+        search_label: "Search:",
+        keyword_placeholder: "Keyword…",
+        refresh: "🔄 Refresh",
+        th_time: "Time",
+        th_user: "User",
+        th_type: "Type",
+        th_user_msg: "User Msg",
+        th_reply: "Reply",
+        th_audio: "Audio",
+        play_audio: "▶ Play",
+        no_logs: "No conversation logs yet",
+        footer_prefix: "Latest 500 rows · Auto refresh every 30s ·"
+      }
+    }
+  };
+
+  function applyIntentLabels(lang) {
+    const labels = {
+      "zh-CN": { sing: "🎵 唱歌", chat: "💬 聊天" },
+      "en": { sing: "🎵 Sing", chat: "💬 Chat" }
+    };
+    document.querySelectorAll("[data-intent]").forEach((node) => {
+      const intent = node.dataset.intent;
+      node.textContent = labels[lang][intent] || intent;
+    });
+  }
+
+  VBF_I18N.mount({
+    dict: LOGS_DICT,
+    onRender: applyIntentLabels
+  });
 </script>
 
 </body>

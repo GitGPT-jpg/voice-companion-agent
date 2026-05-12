@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>💕 灵魂伴侣 / Soulmate</title>
+  <title>💕 灵魂伴侣</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -24,6 +24,23 @@
       text-align: center;
       box-shadow: 0 20px 60px #00000066;
     }
+    .lang-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+    .lang-toggle {
+      width: auto;
+      padding: 8px 14px;
+      background: #140D28;
+      border: 1px solid #3D2B5A;
+      border-radius: 999px;
+      color: #B57BEE;
+      font-size: 12px;
+      margin-top: 0;
+      font-weight: 600;
+    }
+    .lang-toggle:hover { opacity: 1; border-color: #B57BEE; }
     .avatar-icon {
       width: 80px; height: 80px;
       border-radius: 50%;
@@ -79,17 +96,49 @@
 </head>
 <body>
   <div class="card">
+    <div class="lang-row">
+      <button type="button" class="lang-toggle" data-lang-toggle>English</button>
+    </div>
     <div class="avatar-icon">💕</div>
-    <h2>灵魂伴侣 / Soulmate</h2>
-    <p class="sub">只为你一人 · 独家专属 / Just for you</p>
-    {% if error %}
-    <div class="error">{{ error }}</div>
+    <h2 data-i18n="app_name">灵魂伴侣</h2>
+    <p class="sub" data-i18n="subtitle">只为你一人 · 独家专属</p>
+    {% if error_key %}
+    <div class="error" data-i18n="{{ error_key }}">用户名或密码错误</div>
     {% endif %}
     <form method="POST">
-      <input type="text" name="username" placeholder="用户名 / Username" autocomplete="username" required>
-      <input type="password" name="password" placeholder="密码 / Password" autocomplete="current-password" required>
-      <button type="submit">进入 / Enter ❤</button>
+      <input type="text" name="username" data-i18n-placeholder="username_placeholder" placeholder="用户名" autocomplete="username" required>
+      <input type="password" name="password" data-i18n-placeholder="password_placeholder" placeholder="密码" autocomplete="current-password" required>
+      <button type="submit" data-i18n="enter">进入 ❤</button>
     </form>
   </div>
+  <script src="/static/i18n.js?v=1"></script>
+  <script>
+    VBF_I18N.mount({
+      dict: {
+        titles: {
+          "zh-CN": "💕 灵魂伴侣",
+          "en": "💕 Soulmate"
+        },
+        strings: {
+          "zh-CN": {
+            app_name: "灵魂伴侣",
+            subtitle: "只为你一人 · 独家专属",
+            username_placeholder: "用户名",
+            password_placeholder: "密码",
+            enter: "进入 ❤",
+            error_invalid_credentials: "用户名或密码错误"
+          },
+          "en": {
+            app_name: "Soulmate",
+            subtitle: "Just for you",
+            username_placeholder: "Username",
+            password_placeholder: "Password",
+            enter: "Enter ❤",
+            error_invalid_credentials: "Invalid username or password"
+          }
+        }
+      }
+    });
+  </script>
 </body>
 </html>

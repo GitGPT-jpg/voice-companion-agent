@@ -184,7 +184,7 @@ def login():
         if u in _USERS and check_password_hash(_USERS[u]["password"], p):
             login_user(User(u), remember=True)
             return redirect(url_for("index"))
-        return render_template("login.html", error="用户名或密码错误 / Invalid username or password")
+        return render_template("login.html", error_key="error_invalid_credentials")
     return render_template("login.html")
 
 
@@ -238,7 +238,7 @@ def handle_chat(data):
     def worker():
         try:
             intent = detect_intent(user_input)
-            send("status", text="思考中… / Thinking…", color="#8B7AA0")
+            send("status", key="status_thinking", color="#8B7AA0")
 
             if intent == "sing":
                 keyword = user_input
@@ -262,7 +262,7 @@ def handle_chat(data):
                 intro_aud = tts(intro_txt)
                 send("bot_message", text=intro_txt, audio_url=_tts_url(intro_aud), glow="pink")
                 send("singing_start", title=title)
-                send("status", text=f"演唱《{title}》中…", color="#8B7AA0")
+                send("status", key="status_singing", params={"title": title}, color="#8B7AA0")
 
                 wav = sing_song(song)
 
@@ -317,7 +317,7 @@ def handle_call(data):
 
     def worker():
         try:
-            send("status", text="…", color="#FF6B9D")
+            send("status", key="status_call_processing", color="#FF6B9D")
             reply = _chat_call(username, user_input)
             audio = tts(reply)
             send("call_reply", text=reply, audio_url=_tts_url(audio))
