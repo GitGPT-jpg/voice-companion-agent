@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>管理后台 · 灵魂伴侣</title>
+  <title>管理后台 / Admin Panel · 灵魂伴侣 / Soulmate</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -102,38 +102,38 @@
 <body>
 
 <div class="topbar">
-  <div class="logo">💕 <span>灵魂伴侣</span> · 管理后台</div>
-  <a class="back-btn" href="/">← 返回聊天</a>
+  <div class="logo">💕 <span>灵魂伴侣 / Soulmate</span> · 管理后台 / Admin Panel</div>
+  <a class="back-btn" href="/">← 返回聊天 / Back to Chat</a>
 </div>
 
 <!-- 统计卡片（数据来自 Python，不依赖 Jinja2 filters） -->
 <div class="stats">
   <div class="stat-card">
     <div class="stat-num">{{ total }}</div>
-    <div class="stat-label">📋 总消息数</div>
+    <div class="stat-label">📋 总消息数 / Messages</div>
   </div>
   <div class="stat-card">
     <div class="stat-num">{{ users | length }}</div>
-    <div class="stat-label">👤 用户数</div>
+    <div class="stat-label">👤 用户数 / Users</div>
   </div>
   <div class="stat-card">
     <div class="stat-num">{{ sing_count }}</div>
-    <div class="stat-label">🎵 唱歌次数</div>
+    <div class="stat-label">🎵 唱歌次数 / Singing</div>
   </div>
 </div>
 
 <!-- 过滤栏 -->
 <div class="filter-bar">
-  <label>用户：</label>
+  <label>用户 / User:</label>
   <select id="filterUser" onchange="applyFilter()">
-    <option value="">全部</option>
+    <option value="">全部 / All</option>
     {% for u in users %}
       <option value="{{ u }}">{{ u }}</option>
     {% endfor %}
   </select>
-  <label>搜索：</label>
-  <input type="text" id="searchBox" placeholder="关键词…" oninput="applyFilter()">
-  <button class="refresh-btn" onclick="location.reload()">🔄 刷新</button>
+  <label>搜索 / Search:</label>
+  <input type="text" id="searchBox" placeholder="关键词 / Keyword…" oninput="applyFilter()">
+  <button class="refresh-btn" onclick="location.reload()">🔄 刷新 / Refresh</button>
 </div>
 
 <!-- 数据表格 -->
@@ -142,12 +142,12 @@
   <table id="logTable">
     <thead>
       <tr>
-        <th>时间</th>
-        <th>用户</th>
-        <th>类型</th>
-        <th>她说</th>
-        <th>回复</th>
-        <th>语音</th>
+        <th>时间 / Time</th>
+        <th>用户 / User</th>
+        <th>类型 / Type</th>
+        <th>她说 / User Msg</th>
+        <th>回复 / Reply</th>
+        <th>语音 / Audio</th>
       </tr>
     </thead>
     <tbody>
@@ -157,16 +157,16 @@
         <td class="td-user">{{ row.username }}</td>
         <td>
           {% if row.intent == 'sing' %}
-            <span class="badge badge-sing">🎵 唱歌</span>
+            <span class="badge badge-sing">🎵 唱歌 / Sing</span>
           {% else %}
-            <span class="badge badge-chat">💬 聊天</span>
+            <span class="badge badge-chat">💬 聊天 / Chat</span>
           {% endif %}
         </td>
         <td class="td-msg">{{ row.user_msg }}</td>
         <td class="td-reply">{{ row.bot_reply }}</td>
         <td>
           {% if row.audio_path %}
-          <a class="audio-link" href="/audio/tts/{{ row.audio_path | basename }}" target="_blank">▶ 播放</a>
+          <a class="audio-link" href="/audio/tts/{{ row.audio_path | basename }}" target="_blank">▶ 播放 / Play</a>
           {% endif %}
         </td>
       </tr>
@@ -175,10 +175,10 @@
   </table>
 </div>
 {% else %}
-  <div class="empty">暂无对话记录</div>
+  <div class="empty">暂无对话记录 / No conversation logs yet</div>
 {% endif %}
 
-<p class="footer-tip">显示最新 500 条 · 每 30 秒自动刷新 · <span id="countdown">30</span>s</p>
+<p class="footer-tip">显示最新 500 条 / Latest 500 rows · 每 30 秒自动刷新 / Auto refresh every 30s · <span id="countdown">30</span>s</p>
 
 <script>
   function applyFilter() {

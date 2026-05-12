@@ -184,7 +184,7 @@ def login():
         if u in _USERS and check_password_hash(_USERS[u]["password"], p):
             login_user(User(u), remember=True)
             return redirect(url_for("index"))
-        return render_template("login.html", error="用户名或密码错误")
+        return render_template("login.html", error="用户名或密码错误 / Invalid username or password")
     return render_template("login.html")
 
 
@@ -238,7 +238,7 @@ def handle_chat(data):
     def worker():
         try:
             intent = detect_intent(user_input)
-            send("status", text="思考中…", color="#8B7AA0")
+            send("status", text="思考中… / Thinking…", color="#8B7AA0")
 
             if intent == "sing":
                 keyword = user_input

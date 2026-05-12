@@ -27,6 +27,13 @@ const avatarCircle= document.getElementById("avatarCircle");
 const inputArea   = document.getElementById("inputArea");
 const micBtn      = document.getElementById("micBtn");
 
+const UI_TEXT = {
+  online: "在线 / Online · 等你说话 / Ready to listen",
+  thinking: "思考中… / Thinking…",
+  listening: "正在听… / Listening…",
+  call: "📞 通话中 / In call",
+};
+
 // ─── State ───────────────────────────────────────────────────────────────
 let currentReqId    = null;
 let audioQueue      = [];
@@ -93,19 +100,37 @@ function setBusy(busy) {
 
 // ─── Quick replies ───────────────────────────────────────────────────────
 const QUICK_POOLS = {
-  default: ["想你啦", "在干嘛呢", "我今天好累", "陪我聊聊", "睡不着…", "唱首歌吧"],
-  sleep:   ["嗯…晚安", "再陪我一会", "你也要睡了吗"],
-  wake:    ["早安", "睡醒了", "做了个梦"],
-  sing:    ["换一首", "唱你拿手的"],
+  default: [
+    { send: "想你啦", label: "想你啦 / Miss you" },
+    { send: "在干嘛呢", label: "在干嘛呢 / What are you doing?" },
+    { send: "我今天好累", label: "我今天好累 / I'm tired today" },
+    { send: "陪我聊聊", label: "陪我聊聊 / Talk with me" },
+    { send: "睡不着…", label: "睡不着… / Can't sleep" },
+    { send: "唱首歌吧", label: "唱首歌吧 / Sing for me" },
+  ],
+  sleep: [
+    { send: "嗯…晚安", label: "嗯…晚安 / Good night" },
+    { send: "再陪我一会", label: "再陪我一会 / Stay a bit longer" },
+    { send: "你也要睡了吗", label: "你也要睡了吗 / Are you sleeping too?" },
+  ],
+  wake: [
+    { send: "早安", label: "早安 / Good morning" },
+    { send: "睡醒了", label: "睡醒了 / I'm awake" },
+    { send: "做了个梦", label: "做了个梦 / I had a dream" },
+  ],
+  sing: [
+    { send: "换一首", label: "换一首 / Another song" },
+    { send: "唱你拿手的", label: "唱你拿手的 / Sing your best one" },
+  ],
 };
 
 function updateQuickReplies(intent) {
   if (!quickRow) return;
   const pool = QUICK_POOLS[intent] || QUICK_POOLS.default;
-  quickRow.innerHTML = pool.map(t => `<button class="quick-reply">${escHtml(t)}</button>`).join("");
+  quickRow.innerHTML = pool.map(item => `<button class="quick-reply" data-send="${escAttr(item.send)}">${escHtml(item.label)}</button>`).join("");
   quickRow.querySelectorAll(".quick-reply").forEach(btn => {
     btn.addEventListener("click", () => {
-      inputBox.value = btn.textContent;
+      inputBox.value = btn.dataset.send || btn.textContent;
       sendMessage();
     });
   });
@@ -259,7 +284,7 @@ function addEmptyHint() {
   if (chatArea.querySelector(".bubble-row")) return;
   const hint = document.createElement("div");
   hint.className = "empty-hint";
-  hint.textContent = "💕 和他打声招呼吧…";
+  hint.textContent = "💕 和他打声招呼吧… / Say hi to him…";
   chatArea.appendChild(hint);
 }
 
@@ -294,6 +319,10 @@ function escHtml(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+function escAttr(s) {
+  return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
 function scrollBottom() {
   requestAnimationFrame(() => {
     chatArea.scrollTop = chatArea.scrollHeight;
@@ -315,7 +344,7 @@ function sendMessage() {
   const event = callModeActive() ? "call_message" : "chat_message";
   setBusy(true);
   setDot("busy");
-  setStatus("思考中…", "#B57BEE");
+  setStatus(UI_TEXT.thinking, "#B57BEE");
   startGlow("pink");
   showTyping();
 
@@ -366,11 +395,11 @@ function initSpeech() {
     console.log("[语音] 错误:", e.error);
     stopListening();
     if (e.error === "no-speech") {
-      setStatus("没听到声音，再试一次？", "#FF6B9D");
+      setStatus("没听到声音，再试一次？ / Didn't catch that.", "#FF6B9D");
     } else if (e.error === "not-allowed") {
-      setStatus("需要麦克风权限", "#FF6B9D");
+      setStatus("需要麦克风权限 / Microphone permission needed", "#FF6B9D");
     }
-    setTimeout(() => setStatus("在线 · 等你说话", "#8B7AA0"), 2500);
+    setTimeout(() => setStatus(UI_TEXT.online, "#8B7AA0"), 2500);
   };
 }
 
@@ -378,9 +407,9 @@ function startListening() {
   if (!recognition || isListening || sendBtn.disabled) return;
   isListening = true;
   micBtn.classList.add("listening");
-  inputBox.placeholder = "正在听…";
+  inputBox.placeholder = "正在听… / Listening…";
   inputBox.value = "";
-  setStatus("🎤 我在听…", "#FF6B9D");
+  setStatus("🎤 我在听… / I'm listening…", "#FF6B9D");
   startGlow("pink");
   recognition.start();
 }
@@ -389,7 +418,7 @@ function stopListening() {
   if (!isListening) return;
   isListening = false;
   micBtn.classList.remove("listening");
-  inputBox.placeholder = "打字或按🎤说话…";
+  inputBox.placeholder = "打字或按🎤说话… / Type or tap the mic…";
   try { recognition.stop(); } catch(e) {}
 }
 
@@ -449,15 +478,15 @@ function startCall() {
   }
 
   // 字幕
-  callSubtitle.textContent = "正在听…";
+  callSubtitle.textContent = UI_TEXT.listening;
 
   // 状态 + 光晕
-  setStatus("📞 通话中", "#FF6B9D");
+  setStatus(UI_TEXT.call, "#FF6B9D");
   setDot("busy");
   startGlow("call");
 
   // 添加一条通话开始的消息气泡
-  addBotBubble("📞 我在呢，说吧…");
+  addBotBubble("📞 我在呢，说吧… / I'm here, go ahead…");
 }
 
 function hangUpCall() {
@@ -482,7 +511,7 @@ function hangUpCall() {
 
   // 停止光晕
   stopGlow();
-  setStatus("在线 · 等你说话", "#8B7AA0");
+  setStatus(UI_TEXT.online, "#8B7AA0");
   setDot("idle");
   callSubtitle.textContent = "";
 
@@ -490,7 +519,7 @@ function hangUpCall() {
   hideTyping();
 
   // 添加挂断气泡
-  addBotBubble("嗯…挂了也没关系，我一直在的 💕");
+  addBotBubble("嗯…挂了也没关系，我一直在的 💕 / It's okay, I'm still here.");
 }
 
 function updateCallTimer() {
@@ -518,7 +547,7 @@ function initCallRecognition() {
   rec.onstart = () => {
     console.log("[通话] 🎤 开始听");
     callListening = true;
-    callSubtitle.textContent = "正在听…";
+    callSubtitle.textContent = UI_TEXT.listening;
     callSubtitle.classList.remove("listening");
   };
 
@@ -543,13 +572,13 @@ function initCallRecognition() {
     callListening = false;
     
     if (e.error === "not-allowed") {
-      callSubtitle.textContent = "🔇 请允许麦克风权限";
+      callSubtitle.textContent = "🔇 请允许麦克风权限 / Please allow microphone access";
       return; // 权限被拒，不重试
     }
     if (e.error === "no-speech") {
-      callSubtitle.textContent = "正在听…";
+      callSubtitle.textContent = UI_TEXT.listening;
     } else if (e.error === "network") {
-      callSubtitle.textContent = "网络问题，重试中…";
+      callSubtitle.textContent = "网络问题，重试中… / Network issue, retrying…";
     } else {
       callSubtitle.textContent = "…";
     }
@@ -580,7 +609,7 @@ function initCallRecognition() {
     }
     
     // 有有效文本 → 发送
-    if (text && text !== "正在听…" && text !== "…" && text !== "正在听…" && !text.startsWith("🔇") && !text.startsWith("⚠️")) {
+    if (text && text !== UI_TEXT.listening && text !== "…" && text !== "正在听…" && !text.startsWith("🔇") && !text.startsWith("⚠️")) {
       console.log("[通话] 发送:", text);
       sendCallMessage(text);
       return; // sendCallMessage 会自己重启识别
@@ -637,7 +666,7 @@ function sendCallMessage(text) {
   callSubtitle.textContent = "…";
   callSubtitle.classList.remove("listening");
   setDot("busy");
-  setStatus("📞 …", "#B57BEE");
+  setStatus("📞 … / Responding…", "#B57BEE");
   showTyping();
 
   socket.emit("call_message", { text, req_id: currentReqId });
@@ -671,7 +700,7 @@ socket.on("call_reply", data => {
 socket.on("call_done", data => {
   if (data.req_id !== currentReqId) return;
   setDot("busy");
-  setStatus("📞 通话中", "#FF6B9D");
+  setStatus(UI_TEXT.call, "#FF6B9D");
   // 不要 reset busy - 等待音频播放完再重新开始听
 });
 
@@ -695,7 +724,7 @@ socket.on("singing_start", data => {
   if (data.req_id !== currentReqId) return;
   stopSingBtn.classList.remove("hidden");
   setDot("singing");
-  setStatus(`演唱《${data.title || "歌曲"}》中…`, "#B57BEE");
+  setStatus(`演唱《${data.title || "歌曲"}》中… / Singing now…`, "#B57BEE");
   startGlow("purple");
 });
 
@@ -714,7 +743,7 @@ socket.on("song_ready", data => {
   enqueueAudio(data.audio_url, () => {
     stopSingBtn.classList.add("hidden");
     setDot("idle");
-    setStatus("在线 · 等你说话", "#8B7AA0");
+    setStatus(UI_TEXT.online, "#8B7AA0");
   });
 });
 
@@ -733,7 +762,7 @@ socket.on("server_done", data => {
     if (!audioPlaying && audioQueue.length === 0) {
       stopGlow();
       setDot("idle");
-      setStatus("在线 · 等你说话", "#8B7AA0");
+      setStatus(UI_TEXT.online, "#8B7AA0");
       hideTyping();
     }
   };
@@ -753,18 +782,18 @@ stopSingBtn.addEventListener("click", () => {
   currentReqId = genReqId();
   setBusy(true);
   setDot("busy");
-  setStatus("思考中…", "#B57BEE");
+  setStatus(UI_TEXT.thinking, "#B57BEE");
   startGlow("pink");
   showTyping();
   socket.emit("singing_stopped", { req_id: currentReqId });
 });
 
 socket.on("disconnect", () => {
-  setStatus("连接断开…正在重连", "#FF6B9D");
+  setStatus("连接断开…正在重连 / Reconnecting…", "#FF6B9D");
   setDot("idle");
 });
 socket.on("connect", () => {
-  setStatus("在线 · 等你说话", "#8B7AA0");
+  setStatus(UI_TEXT.online, "#8B7AA0");
   setDot("idle");
 });
 

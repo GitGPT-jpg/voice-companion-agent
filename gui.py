@@ -168,7 +168,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         ctk.set_appearance_mode("dark")
-        self.title("💕 灵魂伴侣")
+        self.title("💕 灵魂伴侣 / Soulmate")
         self.geometry("420x820")
         self.resizable(False, False)
         self.configure(fg_color=BG_DARK)
@@ -192,13 +192,13 @@ class App(ctk.CTk):
         self._avatar.pack()
 
         ctk.CTkLabel(
-            top, text="男友",
+            top, text="男友 / Virtual Boyfriend",
             font=ctk.CTkFont(family="微软雅黑", size=18, weight="bold"),
             text_color=TEXT_MAIN,
         ).pack(pady=(4, 0))
 
         self._status_lbl = ctk.CTkLabel(
-            top, text="在线 ·",
+            top, text="在线 / Online ·",
             font=ctk.CTkFont(family="微软雅黑", size=12),
             text_color=ACCENT_PINK,
         )
@@ -213,7 +213,7 @@ class App(ctk.CTk):
         # 停止按钮（初始不 pack，唱歌时 pack 到 input_row 之前）
         self._stop_btn = ctk.CTkButton(
             self._bottom,
-            text="⏹  停止播放",
+            text="⏹  停止播放 / Stop",
             font=ctk.CTkFont(family="微软雅黑", size=13),
             fg_color="#3D1A2E", hover_color="#5A2040",
             text_color=ACCENT_PINK,
@@ -228,7 +228,7 @@ class App(ctk.CTk):
 
         self._entry = ctk.CTkEntry(
             self._input_row,
-            placeholder_text="说点什么…",
+            placeholder_text="说点什么… / Say something…",
             font=ctk.CTkFont(family="微软雅黑", size=14),
             fg_color=BG_CARD, border_color=BORDER_DIM,
             text_color=TEXT_MAIN, placeholder_text_color=TEXT_DIM,
@@ -258,7 +258,7 @@ class App(ctk.CTk):
         self._chat.pack(fill="both", expand=True)
 
         # 欢迎气泡
-        self._add_bubble("嗯，我在这儿呢… 有什么想说的吗？💕", is_user=False)
+        self._add_bubble("嗯，我在这儿呢… 有什么想说的吗？💕 / I'm here. Want to talk?", is_user=False)
 
     # ─── 气泡消息 ─────────────────────────────────────────────────────────────
 
@@ -300,7 +300,7 @@ class App(ctk.CTk):
         audio_module.stop()
         self._hide_stop()
         self._avatar.stop_glow()
-        self._set_status("在线 ·")
+        self._set_status("在线 / Online ·")
         self._entry.configure(state="normal")
         self._send_btn.configure(state="normal")
 
@@ -325,7 +325,7 @@ class App(ctk.CTk):
             intent = detect_intent(user_input)
 
             if intent == "sing":
-                put("status", "思考中…", TEXT_DIM)
+                put("status", "思考中… / Thinking…", TEXT_DIM)
                 keyword = user_input
                 for w in ["唱", "歌", "首", "一", "给我", "来", "个", "sing", "song", "听"]:
                     keyword = keyword.replace(w, "")
@@ -336,19 +336,19 @@ class App(ctk.CTk):
                     song = get_random_song()
 
                 if not song:
-                    put("bubble", "歌曲库还没准备好呢 🥺", False)
+                    put("bubble", "歌曲库还没准备好呢 🥺 / The song library isn't ready yet.", False)
                     return
 
                 title = song.get("title", "一首歌")
                 put("bubble", f"好～给你唱《{title}》♪", False)
 
                 intro = tts(f"好，给你唱{title}")
-                put("status", "说话中…", ACCENT_PINK)
+                put("status", "说话中… / Speaking…", ACCENT_PINK)
                 put("glow", ACCENT_PINK)
                 audio_module.play(intro)
                 put("glow_off")
 
-                put("status", f"准备《{title}》中…", TEXT_DIM)
+                put("status", f"准备《{title}》中… / Preparing song…", TEXT_DIM)
                 self._singing = True
                 wav = sing_song(song)
 
@@ -364,34 +364,34 @@ class App(ctk.CTk):
                     put("glow_off")
 
             elif intent == "sleep":
-                put("status", "思考中…", TEXT_DIM)
+                put("status", "思考中… / Thinking…", TEXT_DIM)
                 self._mode = "sleep"
                 text = llm_chat(user_input, mode="sleep")
                 put("bubble", text, False)
                 audio = tts(text, slow=True)
-                put("status", "哄你睡觉 🌙", ACCENT_PURP)
+                put("status", "哄你睡觉 🌙 / Sleep mode", ACCENT_PURP)
                 put("glow", ACCENT_PURP)
                 audio_module.play(audio)
                 put("glow_off")
 
             elif intent == "wake":
-                put("status", "思考中…", TEXT_DIM)
+                put("status", "思考中… / Thinking…", TEXT_DIM)
                 self._mode = "normal"
                 text = llm_chat(user_input, mode="normal")
                 put("bubble", text, False)
                 audio = tts(text)
-                put("status", "说话中…", ACCENT_PINK)
+                put("status", "说话中… / Speaking…", ACCENT_PINK)
                 put("glow", ACCENT_PINK)
                 audio_module.play(audio)
                 put("glow_off")
 
             else:  # 普通聊天
-                put("status", "思考中…", TEXT_DIM)
+                put("status", "思考中… / Thinking…", TEXT_DIM)
                 text = llm_chat(user_input, mode=self._mode)
                 put("bubble", text, False)
                 audio = tts(text)
                 color = ACCENT_PURP if self._mode == "sleep" else ACCENT_PINK
-                put("status", "说话中…", color)
+                put("status", "说话中… / Speaking…", color)
                 put("glow", color)
                 audio_module.play(audio)
                 put("glow_off")
@@ -421,21 +421,21 @@ class App(ctk.CTk):
             self._avatar.start_glow(ev[1])
         elif tag == "glow_off":
             self._avatar.stop_glow()
-            self._set_status("在线 ·", ACCENT_PINK)
+            self._set_status("在线 / Online ·", ACCENT_PINK)
         elif tag == "singing_start":
-            self._set_status("唱歌中 🎵", ACCENT_PINK)
+            self._set_status("唱歌中 🎵 / Singing", ACCENT_PINK)
             self._avatar.start_glow(ACCENT_PINK)
             self._show_stop()
         elif tag == "singing_end":
             self._singing = False
             self._avatar.stop_glow()
             self._hide_stop()
-            self._set_status("在线 ·", ACCENT_PINK)
+            self._set_status("在线 / Online ·", ACCENT_PINK)
         elif tag == "idle":
             self._singing = False
             self._avatar.stop_glow()
             self._hide_stop()
-            self._set_status("在线 ·", ACCENT_PINK)
+            self._set_status("在线 / Online ·", ACCENT_PINK)
             self._entry.configure(state="normal")
             self._send_btn.configure(state="normal")
             self._entry.focus()
