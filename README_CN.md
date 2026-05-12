@@ -5,7 +5,7 @@
 <br>
 
 <p align="center">
-  <h1 align="center">🎙️ VBF — 虚拟陪伴框架</h1>
+  <h1 align="center">🎙️ Voice Companion Agent</h1>
   <p align="center">
     基于意图路由的 AI 陪伴系统，支持动态人设与长期记忆、多模态输出（TTS + 云端 RVC 唱歌）、<br>
     实时 Web 聊天界面与桌面 GUI。
@@ -25,11 +25,11 @@
 
 ## 项目简介
 
-VBF 是一个 AI 陪伴系统原型。它不是"调用一次大模型然后返回一段文字"的普通 chatbot，而是一个完整的 **AI 产品工程** 系统：
+Voice Companion Agent 是一个 AI 陪伴系统原型。它不是"调用一次大模型然后返回一段文字"的普通 chatbot，而是一个完整的 **AI 产品工程** 系统：
 
 - 自动检测用户**意图**，路由到对应的处理链路
 - **人设、记忆、用户画像**按请求动态拼接，而非固定在一个超长 system prompt 中
-- **历史对话**进行摘要压缩而非简单截断，保留上下文连续性
+- **历史对话**进行摘要压缩而非简单截断，保留上下文连续性，同时控制 token 成本
 - 同时支持**实时 Web 界面**（Flask + Socket.IO）和**桌面 GUI**（CustomTkinter）
 
 > 本仓库为面试展示用的 `code-only` 版本，不包含本地密钥、模型权重、私有语音资产、聊天记录及本地缓存。
@@ -83,7 +83,7 @@ flowchart TD
 |---------|------|
 | 文本回复 | Claude Sonnet（Anthropic API） |
 | 聊天语音 | ElevenLabs / Edge-TTS（备用） |
-| AI 唱歌 | Demucs 人声分离 → Replicate 云端 RVC |
+| AI 唱歌 | Demucs 人声分离 + Replicate 云端 RVC |
 | 混音 | 自定义人声 + 伴奏混音器 |
 
 ### 5. Web 端（Flask + Socket.IO）
@@ -102,7 +102,7 @@ flowchart TD
 ## 目录结构
 
 ```
-vbf/
+voice-companion-agent/
 ├── web_app.py          # Flask Web 后端 + Socket.IO 事件处理
 ├── gui.py              # 桌面 GUI（CustomTkinter）
 ├── main.py             # CLI 入口
@@ -142,8 +142,8 @@ vbf/
 
 ```bash
 # 1. 克隆并创建虚拟环境
-git clone https://github.com/GitGPT-jpg/VBF.git
-cd VBF
+git clone https://github.com/GitGPT-jpg/voice-companion-agent.git
+cd voice-companion-agent
 python -m venv .venv
 
 # 2. 激活（macOS/Linux）
@@ -162,7 +162,7 @@ cp .env.example .env
 ### 启动 Web 版
 ```bash
 python web_app.py
-# → 浏览器打开 http://localhost:5000
+# 浏览器打开 http://localhost:5000
 ```
 
 ### 启动桌面版
@@ -181,18 +181,16 @@ python main.py
 
 | 变量 | 是否必须 | 说明 |
 |------|---------|------|
-| `ANTHROPIC_API_KEY` | ✅ 必须 | Claude API Key（核心 LLM） |
+| `ANTHROPIC_API_KEY` | 必须 | Claude API Key（核心 LLM） |
 | `ANTHROPIC_BASE_URL` | 否 | 自定义 API 端点（默认：`https://api.anthropic.com`） |
 | `ELEVENLABS_API_KEY` | 可选 | ElevenLabs 语音合成 |
 | `ELEVENLABS_VOICE_ID` | 可选 | ElevenLabs 目标音色 ID |
 | `REPLICATE_API_KEY` | 可选 | 云端 RVC 唱歌链路 |
 | `FISH_AUDIO_API_KEY` | 可选 | Fish Audio TTS（备用） |
-| `WEB_SECRET_KEY` | ✅ 必须 | Flask Session 密钥（部署前必须修改） |
+| `WEB_SECRET_KEY` | 必须 | Flask Session 密钥（部署前必须修改） |
 | `WEB_PORT` | 否 | Web 服务端口（默认：`5000`） |
 | `WEB_USER` | 否 | 管理员登录用户名 |
 | `WEB_PASS` | 否 | 管理员登录密码 |
-| `WEB_GF_USER` | 否 | 陪伴账户用户名 |
-| `WEB_GF_PASS` | 否 | 陪伴账户密码 |
 
 ---
 
@@ -202,7 +200,7 @@ python main.py
 # docker-compose.yml
 version: "3.9"
 services:
-  vbf:
+  vca:
     build: .
     ports:
       - "5000:5000"
@@ -262,7 +260,7 @@ docker compose up -d
 ## 面试重点展开
 
 - 人设、记忆和 Prompt 是如何组织和分离的
-- 为什么选择"摘要压缩"而不是简单截断
+- 为什么选择"摘要压缩"而不是简单截断历史
 - 多模态输出如何由同一个对话状态机统一编排
 - 哪些能力放本地，哪些能力交给云端 API
 - 产品体验设计如何反向影响技术架构决策
